@@ -18,6 +18,7 @@ class BookmarkProp(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty(name="Name")
     position: bpy.props.FloatVectorProperty(name="Position", subtype='XYZ')
     rotation: bpy.props.FloatVectorProperty(name="Rotation", subtype='XYZ')
+    focal_length: bpy.props.FloatProperty(name="Focal")
 
 
 class GoToBookmarkOperator(bpy.types.Operator):
@@ -32,6 +33,7 @@ class GoToBookmarkOperator(bpy.types.Operator):
         bookmark = context.scene.bookmark_list[bookmark_index]
         bpy.context.scene.camera.location = bookmark.position
         bpy.context.scene.camera.rotation_euler = bookmark.rotation
+        bpy.context.scene.camera.data.angle = bookmark.focal_length
         return {'FINISHED'}
 
 
@@ -74,6 +76,7 @@ class AddBookmarkOperator(bpy.types.Operator):
             bookmark.name = "Bookmark " + str(len(scene.bookmark_list))
             bookmark.position = camera.location.copy()
             bookmark.rotation = camera.rotation_euler.copy()
+            bookmark.focal_length = camera.data.angle
         return {'FINISHED'}
 
 
