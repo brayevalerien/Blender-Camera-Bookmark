@@ -27,13 +27,15 @@ class GoToBookmarkOperator(bpy.types.Operator):
     """
     bl_idname = "camera.go_to_bookmark"
     bl_label = "Go to Bookmark"
-
     def execute(self, context):
         bookmark_index = context.scene.bookmark_list_active_index
         bookmark = context.scene.bookmark_list[bookmark_index]
-        bpy.context.scene.camera.location = bookmark.position
-        bpy.context.scene.camera.rotation_euler = bookmark.rotation
-        bpy.context.scene.camera.data.angle = bookmark.focal_length
+        if bookmark.position:
+            bpy.context.scene.camera.location = bookmark.position
+        if bookmark.rotation:
+            bpy.context.scene.camera.rotation_euler = bookmark.rotation
+        if bookmark.focal_length:
+            bpy.context.scene.camera.data.angle = bookmark.focal_length
         return {'FINISHED'}
 
 
