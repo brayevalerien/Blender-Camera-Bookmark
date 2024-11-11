@@ -19,6 +19,10 @@ For the moment, a bookmark stores the camera:
 - location
 - rotation
 - focal length
+- sensor size
+- shift x/y
+- clip start/end
+- depth of field on/off
 
 Make sure you select the desired bookmark before hitting the "Go to Selected Bookmark" button, otherwise nothing will happen.
 

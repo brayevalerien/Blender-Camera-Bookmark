@@ -18,7 +18,13 @@ class BookmarkProp(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty(name="Name")
     position: bpy.props.FloatVectorProperty(name="Position", subtype='XYZ')
     rotation: bpy.props.FloatVectorProperty(name="Rotation", subtype='XYZ')
-    focal_length: bpy.props.FloatProperty(name="Focal")
+    focal_length: bpy.props.FloatProperty(name="Focal Length")
+    sensor_size: bpy.props.FloatVectorProperty(name="Sensor Size", size=2)
+    shift_x: bpy.props.FloatProperty(name="Shift X")
+    shift_y: bpy.props.FloatProperty(name="Shift Y")
+    clip_start: bpy.props.FloatProperty(name="Clip Start")
+    clip_end: bpy.props.FloatProperty(name="Clip End")
+    use_dof: bpy.props.BoolProperty(name="Use Depth of Field")
 
 
 class GoToBookmarkOperator(bpy.types.Operator):
@@ -31,9 +37,25 @@ class GoToBookmarkOperator(bpy.types.Operator):
     def execute(self, context):
         bookmark_index = context.scene.bookmark_list_active_index
         bookmark = context.scene.bookmark_list[bookmark_index]
-        bpy.context.scene.camera.location = bookmark.position
-        bpy.context.scene.camera.rotation_euler = bookmark.rotation
-        bpy.context.scene.camera.data.angle = bookmark.focal_length
+        if bookmark.position:
+            bpy.context.scene.camera.location = bookmark.position
+        if bookmark.rotation:
+            bpy.context.scene.camera.rotation_euler = bookmark.rotation
+        if bookmark.focal_length:
+            bpy.context.scene.camera.data.angle = bookmark.focal_length
+        if bookmark.sensor_size:
+            bpy.context.scene.camera.data.sensor_width = bookmark.sensor_size[0]
+            bpy.context.scene.camera.data.sensor_height = bookmark.sensor_size[1]
+        if bookmark.shift_x:
+            bpy.context.scene.camera.data.shift_x = bookmark.shift_x
+        if bookmark.shift_y:
+            bpy.context.scene.camera.data.shift_y = bookmark.shift_y
+        if bookmark.clip_start:
+            bpy.context.scene.camera.data.clip_start = bookmark.clip_start
+        if bookmark.clip_end:
+            bpy.context.scene.camera.data.clip_end = bookmark.clip_end
+        if not bookmark.use_dof is None:
+            bpy.context.scene.camera.data.dof.use_dof = bookmark.use_dof
         return {'FINISHED'}
 
 
@@ -77,6 +99,13 @@ class AddBookmarkOperator(bpy.types.Operator):
             bookmark.position = camera.location.copy()
             bookmark.rotation = camera.rotation_euler.copy()
             bookmark.focal_length = camera.data.angle
+            bookmark.sensor_size = (
+                camera.data.sensor_width, camera.data.sensor_height)
+            bookmark.shift_x = camera.data.shift_x
+            bookmark.shift_y = camera.data.shift_y
+            bookmark.clip_start = camera.data.clip_start
+            bookmark.clip_end = camera.data.clip_end
+            bookmark.use_dof = camera.data.dof.use_dof
         return {'FINISHED'}
 
 
